@@ -14,15 +14,15 @@ import java.util.List;
  */
 public interface ILibroDao {
     
-    public List<Libro> selectAll() throws SQLException;
+    public List<Libro> selectAll();
     
-    public List<Libro> selectByID(Libro libro) throws SQLException;
+    public List<Libro> selectByID(Libro libro);
     
-    public List<Libro> selectByName(Libro libro) throws SQLException;
+    public List<Libro> selectByName(Libro libro);
     
-    public int insert(Libro libro) throws SQLException;
+    public int insert(Libro libro);
     
-    public int update(Libro libro) throws SQLException;
+    public int update(Libro libro);
     
-    public int delete(Libro libro) throws SQLException;
+    public int delete(Libro libro);
 }

@@ -4,6 +4,10 @@
 
 package com.mycompany.proyectobiblioteca;
 
+import Dominio.Libro;
+import Persistencia.DAO.LibroDao;
+import java.util.List;
+
 /**
  *
  * @author ldoar
@@ -11,6 +15,12 @@ package com.mycompany.proyectobiblioteca;
 public class Proyectobiblioteca {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        LibroDao librodao = new LibroDao();
+        
+        List<Libro> libros = librodao.selectAll();
+        
+        for (Libro libro : libros) {
+            System.out.println("Libro: "+ libro);
+        }
     }
 }
