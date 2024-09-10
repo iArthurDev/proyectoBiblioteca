@@ -4,8 +4,8 @@
  */
 package Persistencia.DAO;
 
-import Dominio.Libro;
-import Persistencia.Interfaces.ILibroDao;
+import Dominio.Usuario;
+import Persistencia.Interfaces.IUsuarioDao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,81 +15,73 @@ import javax.swing.JOptionPane;
  *
  * @author ldoar
  */
-public class LibroDao implements ILibroDao {
+public class UsuarioDao implements IUsuarioDao {
 
     private Connection conexion;
 
-    public LibroDao() {
+    public UsuarioDao() {
         this.conexion = ConexionBD.getInstance().obtenerConexion();
     }
 
     /**
-     * Metodo que regresa todos los registros de la tabla libro
-     *
-     * @return
+     * Me
+     * @return 
      */
     @Override
-    public List<Libro> selectAll() {
-        List<Libro> libros = new ArrayList<>();
-        String sql = "SELECT * FROM libro";
+    public List<Usuario> selectAll() {
+        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "SELECT * FROM usuario";
 
         try (PreparedStatement stmt = conexion.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Libro libro = new Libro(rs.getInt("idLibro"),
-                        rs.getString("titulo"),
-                        rs.getString("autor"),
-                        rs.getString("editorial"),
-                        rs.getString("genero"),
-                        rs.getString("anioPublicacion"),
-                        rs.getInt("copiasDisponibles"));
-                libros.add(libro);
+                Usuario usuario = new Usuario(rs.getInt("idUsuario"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("email"),
+                        rs.getString("telefono"),
+                        rs.getDate("fechaRegistro"));
+                
+                usuarios.add(usuario);
             }
         } catch (SQLException e) {
             e.printStackTrace(System.out);
         }
-        if (libros.isEmpty()) {
+        if (usuarios.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Advertencia: No se encontraron registros", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
-        return libros;
+        return usuarios;
     }
 
     @Override
-    public Libro selectByID(Libro libro) {
+    public Usuario selectByID(Usuario usuario) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    /**
-     * Metodo que regresa todos los registros que tengan coindicendia con el
-     * String enviado por parámetro
-     *
-     * @param titulo
-     * @return
-     */
     @Override
-    public List<Libro> selectByName(String titulo) {
-        List<Libro> libros = new ArrayList<>();
-        String sql = "SELECT * FROM usuario WHERE titulo LIKE ?";
+    public List<Usuario> selectByName(String nombre) {
+        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "SELECT * FROM usuario WHERE nombre LIKE ?";
 
         try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
-            if (titulo == null || titulo.trim().isEmpty()) {
+            if (nombre == null || nombre.trim().isEmpty()) {
                 stmt.setString(1, "%");
             } else {
-                stmt.setString(1, "%" + titulo + "%");
+                stmt.setString(1, "%" + nombre + "%");
             }
 
             try (ResultSet rs = stmt.executeQuery()) {
 
                 while (rs.next()) {
-                    Libro libro = new Libro(rs.getInt("idLibro"),
-                            rs.getString("titulo"),
-                            rs.getString("autor"),
-                            rs.getString("editorial"),
-                            rs.getString("genero"),
-                            rs.getString("anioPublicacion"),
-                            rs.getInt("copiasDisponibles"));
-                    libros.add(libro);
+                    Usuario usuario = new Usuario(rs.getInt("idUsuario"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("email"),
+                        rs.getString("telefono"),
+                        rs.getDate("fechaRegistro"));
+                
+                    usuarios.add(usuario);
                 }
 
             } catch (SQLDataException e) {
@@ -99,31 +91,25 @@ public class LibroDao implements ILibroDao {
         } catch (SQLException e) {
             e.printStackTrace(System.out);
         }
-        if (libros.isEmpty()) {
+        if (usuarios.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Advertencia: No se encontraron registros", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
-        return libros;
+        return usuarios;
     }
 
-    /**
-     * Metodo que realiza la inserción de un nuevo registro
-     * @param libro
-     * @return 
-     */
     @Override
-    public int insert(Libro libro) {
-        String sql = "INSERT INTO libro (titulo, autor, editorial, genero, anioPublicacion, copiasDisponibles) "
-                + "VALUES (?,?,?,?,?,?)";
+    public int insert(Usuario usuario) {
+        String sql = "INSERT INTO usuario (nombre, apellido, email, telefono, fechaRegistro) "
+                + "VALUES (?,?,?,?,?)";
         int registros = 0;
 
         try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
-            stmt.setString(1, libro.getTitulo());
-            stmt.setString(2, libro.getAutor());
-            stmt.setString(3, libro.getEditorial());
-            stmt.setString(4, libro.getGenero());
-            stmt.setString(5, libro.getAnioPublicacion());
-            stmt.setInt(6, libro.getCopiasDisponibles());
+            stmt.setString(1, usuario.getNombre());
+            stmt.setString(2, usuario.getApellido());
+            stmt.setString(3, usuario.getEmail());
+            stmt.setString(4, usuario.getTelefono());
+            stmt.setDate(5, (Date) usuario.getFechaRegistro());
 
             registros = stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Información: Se guardo el registro correctamente", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
@@ -138,12 +124,12 @@ public class LibroDao implements ILibroDao {
     }
 
     @Override
-    public int update(Libro libro) {
+    public int update(Usuario usuario) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public int delete(Libro libro) {
+    public int delete(Usuario usuario) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

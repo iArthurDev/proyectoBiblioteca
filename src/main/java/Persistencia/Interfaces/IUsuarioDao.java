@@ -4,24 +4,24 @@
  */
 package Persistencia.Interfaces;
 
-import Dominio.Libro;
+import Dominio.Usuario;
 import java.util.List;
 
 /**
  *
  * @author ldoar
  */
-public interface ILibroDao {
+public interface IUsuarioDao {
     
-    public List<Libro> selectAll();
+    public List<Usuario> selectAll();
     
-    public Libro selectByID(Libro libro);
+    public Usuario selectByID(Usuario usuario);
     
-    public List<Libro> selectByName(String titulo);
+    public List<Usuario> selectByName(String nombre);
     
-    public int insert(Libro libro);
+    public int insert(Usuario usuario);
     
-    public int update(Libro libro);
+    public int update(Usuario usuario);
     
-    public int delete(Libro libro);
+    public int delete(Usuario usuario);
 }
