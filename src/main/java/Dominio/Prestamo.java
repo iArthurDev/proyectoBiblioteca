@@ -18,6 +18,7 @@ public class Prestamo {
     private String estado;
     private int aumentoFecha;
     private double multa;
+    private int cantidadLibros;
 
     public Prestamo() {
     }
@@ -26,16 +27,17 @@ public class Prestamo {
         this.idPrestamo = idPrestamo;
     }
 
-    public Prestamo(Usuario idUsuario, Date fechaPrestamo, Date fechaEntrega, String estado, int aumentoFecha, double multa) {
+    public Prestamo(Usuario idUsuario, Date fechaPrestamo, Date fechaEntrega, String estado, int aumentoFecha, double multa, int cantidadLibros) {
         this.idUsuario = idUsuario;
         this.fechaPrestamo = fechaPrestamo;
         this.fechaEntrega = fechaEntrega;
         this.estado = estado;
         this.aumentoFecha = aumentoFecha;
         this.multa = multa;
+        this.cantidadLibros = cantidadLibros;
     }
 
-    public Prestamo(int idPrestamo, Usuario idUsuario, Date fechaPrestamo, Date fechaEntrega, String estado, int aumentoFecha, double multa) {
+    public Prestamo(int idPrestamo, Usuario idUsuario, Date fechaPrestamo, Date fechaEntrega, String estado, int aumentoFecha, double multa, int cantidadLibros) {
         this.idPrestamo = idPrestamo;
         this.idUsuario = idUsuario;
         this.fechaPrestamo = fechaPrestamo;
@@ -43,6 +45,7 @@ public class Prestamo {
         this.estado = estado;
         this.aumentoFecha = aumentoFecha;
         this.multa = multa;
+        this.cantidadLibros = cantidadLibros;
     }
 
     public int getIdPrestamo() {
@@ -101,8 +104,17 @@ public class Prestamo {
         this.multa = multa;
     }
 
+    public int getCantidadLibros() {
+        return cantidadLibros;
+    }
+
+    public void setCantidadLibros(int cantidadLibros) {
+        this.cantidadLibros = cantidadLibros;
+    }
+
     @Override
     public String toString() {
-        return "Prestamo{" + "idPrestamo=" + idPrestamo + ", idUsuario=" + idUsuario + ", fechaPrestamo=" + fechaPrestamo + ", fechaEntrega=" + fechaEntrega + ", estado=" + estado + ", aumentoFecha=" + aumentoFecha + ", multa=" + multa + '}';
+        return "Prestamo{" + "idPrestamo=" + idPrestamo + ", idUsuario=" + idUsuario + ", fechaPrestamo=" + fechaPrestamo + ", fechaEntrega=" + fechaEntrega + ", estado=" + estado + ", aumentoFecha=" + aumentoFecha + ", multa=" + multa + ", cantidadLibros=" + cantidadLibros + '}';
     }
+ 
 }

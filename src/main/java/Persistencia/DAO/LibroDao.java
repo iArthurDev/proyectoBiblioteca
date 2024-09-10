@@ -69,7 +69,7 @@ public class LibroDao implements ILibroDao {
     @Override
     public List<Libro> selectByName(String titulo) {
         List<Libro> libros = new ArrayList<>();
-        String sql = "SELECT * FROM usuario WHERE titulo LIKE ?";
+        String sql = "SELECT * FROM libro WHERE titulo LIKE ?";
 
         try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
