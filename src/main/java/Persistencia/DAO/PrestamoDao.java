@@ -132,7 +132,8 @@ public class PrestamoDao implements IPrestamoDao {
     public void updateDevolucion(Prestamo idPrestamo, List<Libro> listaLibros) {
 
         try {
-            // Deshabilitar auto-commit para iniciar la transacción
+            //Inicia transacción
+            //Deshabilitar autocomit
             conexion.setAutoCommit(false);
 
             // Iterar sobre los libros devueltos
@@ -165,9 +166,9 @@ public class PrestamoDao implements IPrestamoDao {
             // Verificar si todos los libros del préstamo ya fueron devueltos
             String sqlCheckPendientes = "SELECT COUNT(*) FROM prestamolibros WHERE idPrestamo = ? AND estado = 'Pendiente'";
             try (PreparedStatement stmtCheckPendientes = conexion.prepareStatement(sqlCheckPendientes)) {
-                
+
                 stmtCheckPendientes.setInt(1, idPrestamo.getIdPrestamo());
-                
+
                 try (ResultSet rs = stmtCheckPendientes.executeQuery()) {
                     if (rs.next() && rs.getInt(1) == 0) {
                         // Si no hay libros pendientes, cambiar el estado del préstamo a "Completado"
@@ -183,6 +184,79 @@ public class PrestamoDao implements IPrestamoDao {
 
             // Hacer commit de la transacción
             conexion.commit();
+
+        } catch (SQLException e) {
+            if (conexion != null) {
+                try {
+                    // Si ocurre un error, hacer rollback
+                    conexion.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace(System.out);
+                }
+            }
+            e.printStackTrace(System.out);
+        } finally {
+            try {
+                if (conexion != null) {
+                    conexion.setAutoCommit(true);
+                    conexion.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
+        }
+    }
+
+    @Override
+    public void updateFechaEntrega(Prestamo prestamo) {
+        try {
+            // Deshabilitar auto-commit para iniciar la transacción
+            conexion.setAutoCommit(false);
+
+            // Obtener la información del préstamo actual
+            String sqlSelect = "SELECT fechaEntrega, aumentoFecha, estado FROM prestamo WHERE idPrestamo = ?";
+            try (PreparedStatement stmtSelect = conexion.prepareStatement(sqlSelect)) {
+                stmtSelect.setInt(1, prestamo.getIdPrestamo());
+
+                try (ResultSet rs = stmtSelect.executeQuery()) {
+                    if (rs.next()) {
+                        Date fechaEntregaActual = rs.getDate("fechaEntrega");
+                        String estado = rs.getString("estado");
+                        int aumentos = rs.getInt("aumentoFecha");
+
+                        // Verificar si ya se hicieron dos cambios de fecha
+                        if (aumentos >= 2) {
+                            JOptionPane.showMessageDialog(null, "No se puede aumentar más la fecha de entrega", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+
+                        // Sumar 5 días a la fecha de entrega actual
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(fechaEntregaActual);
+                        calendar.add(Calendar.DAY_OF_MONTH, 5);
+                        Date nuevaFechaEntrega = new Date(calendar.getTimeInMillis());
+
+                        // Cambiar el estado a "Pendiente" si estaba en "Atrasado"
+                        if ("Atrasado".equals(estado)) {
+                            estado = "Pendiente";
+                        }
+
+                        // Actualizar la fecha de entrega, el estado y aumentar el contador de cambios de fecha
+                        String sqlUpdate = "UPDATE prestamo SET fechaEntrega = ?, aumentoFecha = aumentoFecha + 1, estado = ? WHERE idPrestamo = ?";
+                        try (PreparedStatement stmtUpdate = conexion.prepareStatement(sqlUpdate)) {
+                            stmtUpdate.setDate(1, nuevaFechaEntrega);
+                            stmtUpdate.setString(2, estado);
+                            stmtUpdate.setInt(3, prestamo.getIdPrestamo());
+
+                            stmtUpdate.executeUpdate();
+                        }
+                    }
+                }
+            }
+
+            // Hacer commit de la transacción
+            conexion.commit();
+            JOptionPane.showMessageDialog(null, "Fecha de entrega actualizada con éxito", "INFORMACIÓN", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (SQLException e) {
             if (conexion != null) {

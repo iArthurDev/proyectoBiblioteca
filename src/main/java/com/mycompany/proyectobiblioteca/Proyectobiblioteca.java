@@ -63,16 +63,20 @@ public class Proyectobiblioteca {
         librosPrestamo.add(librodao.selectByName("Señor de los anillos: Las dos torres").get(0));
         librosPrestamo.add(librodao.selectByName("Harry Potter y la piedra filosofal").get(0));
         
-        for (Libro libro : librosPrestamo) {
-            System.out.println("Libros a prestamo: "+libro);
-        }
+//        for (Libro libro : librosPrestamo) {
+//            System.out.println("Libros a prestamo: "+libro);
+//        }
+        
 //        prestamoDao.insert(new Usuario(1), librosPrestamo);
 
         List<Libro> librosDevolusiones = new ArrayList<>();
-        for (Libro libro : librosPrestamo) {
-            librosDevolusiones.add(libro);
-        }
         
-        prestamoDao.updateDevolucion(new Prestamo(18), librosDevolusiones);
+        librosDevolusiones.add(librosPrestamo.get(0));
+        
+        System.out.println(librosDevolusiones.get(0));
+        
+        prestamoDao.updateDevolucion(new Prestamo(19), librosDevolusiones);
+
+//        prestamoDao.updateFechaEntrega(new Prestamo(19));
     }
 }
