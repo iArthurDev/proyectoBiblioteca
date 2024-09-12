@@ -129,8 +129,81 @@ public class PrestamoDao implements IPrestamoDao {
     }
 
     @Override
-    public int updateDevolucion(Usuario idUsuario, Libro idLibro) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void updateDevolucion(Prestamo idPrestamo, List<Libro> listaLibros) {
+
+        try {
+            // Deshabilitar auto-commit para iniciar la transacción
+            conexion.setAutoCommit(false);
+
+            // Iterar sobre los libros devueltos
+            for (Libro libro : listaLibros) {
+
+                // Actualizar el estado de detallePrestamo a "Entregado"
+                String sqlUpdateDetallePrestamo = "UPDATE prestamolibros SET estado = ?, fechaDevolucion = ? WHERE idPrestamo = ? AND idLibro = ? AND estado = 'Pendiente'";
+                try (PreparedStatement stmtUpdateDetallePrestamo = conexion.prepareStatement(sqlUpdateDetallePrestamo)) {
+                    stmtUpdateDetallePrestamo.setString(1, "Entregado");
+                    stmtUpdateDetallePrestamo.setDate(2, new java.sql.Date(System.currentTimeMillis()));
+                    stmtUpdateDetallePrestamo.setInt(3, idPrestamo.getIdPrestamo()); // Obtener el id del préstamo del usuario
+                    stmtUpdateDetallePrestamo.setInt(4, libro.getIdLibro());
+
+                    int registrosActualizados = stmtUpdateDetallePrestamo.executeUpdate();
+
+                    if (registrosActualizados == 0) {
+                        JOptionPane.showMessageDialog(null, "Advertencia: No se encontró un préstamo pendiente para este libro", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                        continue;
+                    }
+
+                    // Actualizar las copias disponibles del libro en la tabla libro
+                    String sqlUpdateLibro = "UPDATE libro SET copiasDisponibles = copiasDisponibles + 1 WHERE idLibro = ?";
+                    try (PreparedStatement stmtUpdateLibro = conexion.prepareStatement(sqlUpdateLibro)) {
+                        stmtUpdateLibro.setInt(1, libro.getIdLibro());
+                        stmtUpdateLibro.executeUpdate();
+                    }
+                }
+            }
+
+            // Verificar si todos los libros del préstamo ya fueron devueltos
+            String sqlCheckPendientes = "SELECT COUNT(*) FROM prestamolibros WHERE idPrestamo = ? AND estado = 'Pendiente'";
+            try (PreparedStatement stmtCheckPendientes = conexion.prepareStatement(sqlCheckPendientes)) {
+                
+                stmtCheckPendientes.setInt(1, idPrestamo.getIdPrestamo());
+                
+                try (ResultSet rs = stmtCheckPendientes.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) == 0) {
+                        // Si no hay libros pendientes, cambiar el estado del préstamo a "Completado"
+                        String sqlUpdatePrestamo = "UPDATE prestamo SET estado = ? WHERE idPrestamo = ?";
+                        try (PreparedStatement stmtUpdatePrestamo = conexion.prepareStatement(sqlUpdatePrestamo)) {
+                            stmtUpdatePrestamo.setString(1, "Entregado");
+                            stmtUpdatePrestamo.setInt(2, idPrestamo.getIdPrestamo());
+                            stmtUpdatePrestamo.executeUpdate();
+                        }
+                    }
+                }
+            }
+
+            // Hacer commit de la transacción
+            conexion.commit();
+
+        } catch (SQLException e) {
+            if (conexion != null) {
+                try {
+                    // Si ocurre un error, hacer rollback
+                    conexion.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace(System.out);
+                }
+            }
+            e.printStackTrace(System.out);
+        } finally {
+            try {
+                if (conexion != null) {
+                    conexion.setAutoCommit(true);
+                    conexion.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
+        }
     }
 
 }

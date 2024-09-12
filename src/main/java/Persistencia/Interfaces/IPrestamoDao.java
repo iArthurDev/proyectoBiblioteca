@@ -21,6 +21,6 @@ public interface IPrestamoDao {
     
     public void insert(Usuario idUsuario, List<Libro> listaLibros);
     
-    public int updateDevolucion(Usuario idUsuario, Libro idLibro);
+    public void updateDevolucion(Prestamo idPrestamo, List<Libro> listaLibros);
 
 }

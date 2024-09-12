@@ -4,6 +4,7 @@
 package com.mycompany.proyectobiblioteca;
 
 import Dominio.Libro;
+import Dominio.Prestamo;
 import Dominio.Usuario;
 import Persistencia.DAO.LibroDao;
 import Persistencia.DAO.PrestamoDao;
@@ -59,12 +60,19 @@ public class Proyectobiblioteca {
         PrestamoDao prestamoDao = new PrestamoDao();
         List<Libro> librosPrestamo = new ArrayList<>();
         
-        librosPrestamo.add(librodao.selectByName("Señor de los anillos: La comunidad del anillo").get(0));
+        librosPrestamo.add(librodao.selectByName("Señor de los anillos: Las dos torres").get(0));
         librosPrestamo.add(librodao.selectByName("Harry Potter y la piedra filosofal").get(0));
         
-//        for (Libro libro : librosPrestamo) {
-//            System.out.println("Libros a prestamo: "+libro);
-//        }
-        prestamoDao.insert(new Usuario(1), librosPrestamo);
+        for (Libro libro : librosPrestamo) {
+            System.out.println("Libros a prestamo: "+libro);
+        }
+//        prestamoDao.insert(new Usuario(1), librosPrestamo);
+
+        List<Libro> librosDevolusiones = new ArrayList<>();
+        for (Libro libro : librosPrestamo) {
+            librosDevolusiones.add(libro);
+        }
+        
+        prestamoDao.updateDevolucion(new Prestamo(18), librosDevolusiones);
     }
 }
