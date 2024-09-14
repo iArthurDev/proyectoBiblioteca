@@ -20,16 +20,14 @@ public class ConexionBD{
     private Connection conexion;
     
     //Declaración de constantes para la conexión a la base de datos
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/proyectobiblioteca?useSSL=false&useTimezone=true&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-    private static final String JDBC_USER = "root";
-    private static final String JDBC_PASSWORD = "12345";
+    
  
     private ConexionBD(){
-        try {
-            conexion = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-        } catch (SQLException ex) {
-            Logger.getLogger(ConexionBD.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            conexion = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+//        } catch (SQLException ex) {
+//            Logger.getLogger(ConexionBD.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
     
     public static ConexionBD getInstance(){
